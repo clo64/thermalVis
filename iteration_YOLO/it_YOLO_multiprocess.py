@@ -21,10 +21,13 @@ def thermalDetection(wPipe):
     font = cv2.FONT_HERSHEY_SIMPLEX
     starting_time = time.time()
     frame_id = 0
-
+    frameModulo = 0;
     while True:
+        #test changing to grab
+        
         _, frame = cap.read()
-        frame_id += 1
+       # if frameModulo%20 == 0:
+        #frame_id += 1
         height, width, channels = frame.shape
 
         # Detecting objects
@@ -86,7 +89,7 @@ def httpPost(rPipe):
         readIt = readIt.decode()
         print("readIt")
         print(readIt)
-        printf("readIt")
+        print("readIt")
         pload = {
             "RoomNumber": "1",
             "Floor": "1",

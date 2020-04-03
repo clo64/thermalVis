@@ -3,6 +3,7 @@ import cv2
 import time
 import imutils
 import multiprocessing
+import requests
 
 #Goal is to send the number of occupants
 #from the OpenCV process to our looping
@@ -22,6 +23,7 @@ cap = cv2.VideoCapture(0)
 font = cv2.FONT_HERSHEY_SIMPLEX
 starting_time = time.time()
 frame_id = 0
+sendModulo = 0;
 
 while True:
     _, frame = cap.read()
@@ -73,6 +75,19 @@ while True:
     frame = imutils.resize(frame, width=400)
     cv2.imshow("Image", frame)
     key = cv2.waitKey(1)
+    
+    if(sendModulo%20 == 0):
+        pload = {
+            "RoomNumber": "1",
+            "Floor": "1",
+            "NumberOccupants": str(len(boxes)),
+            "All": "0",
+            "CreateNew": "0"
+            }
+        postIt = requests.post('http://occupancy-detection.herokuapp.com/api/thermaldata', json=pload)
+        print(postIt.text)
+        print("DB Updated")
+    sendModulo += 1
     if key == 27:
         break
     
