@@ -1,3 +1,7 @@
+#Charles Owen
+#Partial code credit to Pysource for the OpenCV and YOLO implimentation. 
+#YOLO training and multiprocess HTTP requests my own work.
+
 import numpy as np
 import cv2
 import time
@@ -7,24 +11,23 @@ import requests
 import os
 
 def thermalDetection(wPipe):
-    # Load Yolo
+    # Load custom yolo weights and cfg file
     net = cv2.dnn.readNet("yolov3Chuck_final.weights", "yolov3Chuck.cfg")
+    #This class definition works because single class
     classes = ['person_up']
-    #with open("obj.names", "r") as f:
-    #    classes = [line.strip() for line in f.readlines()]
     layer_names = net.getLayerNames()
     output_layers = [layer_names[i[0] - 1] for i in net.getUnconnectedOutLayers()]
-    colors = np.random.uniform(0, 255, size=(len(classes), 3))
+    #colors = np.random.uniform(0, 255, size=(len(classes), 3))
 
     # Loading camera
     cap = cv2.VideoCapture(0)
     font = cv2.FONT_HERSHEY_SIMPLEX
     starting_time = time.time()
     frame_id = 0
+    
+    #writeModule used to slow down the IPC write operation.
     writeModulo = 0;
-    while True:
-        #test changing to grab
-        
+    while True:  
         _, frame = cap.read()
         # if frameModulo%20 == 0:
         #frame_id += 1
