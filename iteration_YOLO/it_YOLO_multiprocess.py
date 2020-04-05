@@ -21,12 +21,12 @@ def thermalDetection(wPipe):
     font = cv2.FONT_HERSHEY_SIMPLEX
     starting_time = time.time()
     frame_id = 0
-    frameModulo = 0;
+    writeModulo = 0;
     while True:
         #test changing to grab
         
         _, frame = cap.read()
-       # if frameModulo%20 == 0:
+        # if frameModulo%20 == 0:
         #frame_id += 1
         height, width, channels = frame.shape
 
@@ -62,7 +62,7 @@ def thermalDetection(wPipe):
             
         #number_object_detected = len(boxes)
         indexes = cv2.dnn.NMSBoxes(boxes, confidences, 0.5, 0.4)
-        print(len(boxes))
+        #print(len(boxes))
 
         for i in range(len(boxes)):
             if i in indexes:     
@@ -73,7 +73,11 @@ def thermalDetection(wPipe):
                 cv2.putText(frame, label, (x, y -10), font, .2, (0, 255, 0), 3)
     
         frame = imutils.resize(frame, width=400)
-        os.write(wPipe, str.encode(str(len(boxes))))
+        
+        if(writeModulo%10==0):
+            os.write(wPipe, str.encode(str(len(boxes))))
+            
+        writeModulo += 1
         cv2.imshow("Image", frame)
         key = cv2.waitKey(1)
         if key == 27:
@@ -84,20 +88,20 @@ def thermalDetection(wPipe):
     
 def httpPost(rPipe):
     while True:
-        time.sleep(2)
-        readIt = os.read(rPipe, 1)
+        #time.sleep(8)
+        readIt = os.read(rPipe, 10)
         readIt = readIt.decode()
         print("readIt")
         print(readIt)
         print("readIt")
         pload = {
-            "RoomNumber": "1",
+            "Room_Number": "1",
             "Floor": "1",
-            "NumberOccupants": readIt,
-            "All": "0",
-            "CreateNew": "0"
+            "Thermal_Occupants": readIt,
+            "All": "0"
             }
         postIt = requests.post('http://occupancy-detection.herokuapp.com/api/thermaldata', json=pload)
+        print("Sending Data")
         print(postIt.text)
     #print("reading")
     #while True:
