@@ -71,7 +71,7 @@ def thermalDetection(wPipe):
             if i in indexes:     
                 x, y, w, h = boxes[i]
                 label = str(classes[class_ids[i]])
-                print(label)
+                #print(label) prints person_up
                 cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 1)
                 cv2.putText(frame, label, (x, y -10), font, .2, (0, 255, 0), 3)
     
@@ -79,6 +79,9 @@ def thermalDetection(wPipe):
         
         if(writeModulo%10==0):
             os.write(wPipe, str.encode(str(len(boxes))))
+            #Save image drawn on screen
+            cv2.imwrite("therm_image.png", frame)
+            
             
         writeModulo += 1
         cv2.imshow("Image", frame)
@@ -94,9 +97,6 @@ def httpPost(rPipe):
         #time.sleep(8)
         readIt = os.read(rPipe, 10)
         readIt = readIt.decode()
-        print("readIt")
-        print(readIt)
-        print("readIt")
         pload = {
             "Room_Number": "1",
             "Floor": "1",
@@ -104,6 +104,12 @@ def httpPost(rPipe):
             "All": "0"
             }
         postIt = requests.post('http://occupancy-detection.herokuapp.com/api/thermaldata', json=pload)
+        #Send file logic
+        img_path = '/home/pi/Documents/computerVision/iteration_YOLO/therm_image.png'
+        url = 'http://occupancy-detection.herokuapp.com/api/thermaldata/image'
+        files = {'image': ('therm_image.png', open(img_path, 'rb'), 'image/png')}
+        r = requests.post(url, files=files)
+        print(r.text)
         print("Sending Data")
         print(postIt.text)
     #print("reading")
