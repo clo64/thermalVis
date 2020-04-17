@@ -46,7 +46,7 @@ def thermalDetection(wPipe):
                 scores = detection[5:]
                 class_id = np.argmax(scores)
                 confidence = scores[class_id]
-                if confidence > 0.5:
+                if confidence > 0.4:
                     #object detected
                     center_x = int(detection[0] * width)
                     center_y = int(detection[1] * height)
@@ -109,9 +109,9 @@ def httpPost(rPipe):
         url = 'http://occupancy-detection.herokuapp.com/api/thermaldata/image'
         files = {'image': ('therm_image.png', open(img_path, 'rb'), 'image/png')}
         r = requests.post(url, files=files)
-        print(r.text)
-        print("Sending Data")
-        print(postIt.text)
+        #print(r.text)
+        #print("Sending Data")
+        #print(postIt.text)
     #print("reading")
     #while True:
     #     readIt = os.read(rPipe, 20)
